@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <title>reVine CRMP | Техническая поддержка</title>
+    <meta name="description" content="Помощь игрокам проекта reVine CRMP">
+    <link rel="icon" href="/logo1.png" type="image/png">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --accent: #8a2be2;
+            --accent-glow: rgba(138, 43, 226, 0.5);
+            --bg-dark: #0f0f13;
+            --text-main: #ffffff;
+            --text-muted: #b3b3b3;
+        }
+
+        * { -webkit-tap-highlight-color: transparent; outline: none; }
+        .glass-btn, .menu-btn, .close-btn { user-select: none; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Montserrat', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-main);
+            overflow-x: hidden;
+            display: flex; flex-direction: column; min-height: 100vh;
+        }
+
+        /* --- Бургер Меню (из основного файла) --- */
+        .menu-btn {
+            position: fixed; top: 20px; right: 20px; z-index: 100;
+            background: rgba(255,255,255,0.05); backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2); border-radius: 12px;
+            padding: 12px 16px; cursor: pointer; color: white; font-size: 1.5rem;
+            transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        .menu-btn:hover { background: var(--accent); border-color: var(--accent); transform: scale(1.05); }
+        
+        .side-menu {
+            position: fixed; top: 0; right: -320px; width: 300px; height: 100vh;
+            background: rgba(15, 15, 19, 0.98); backdrop-filter: blur(20px);
+            border-left: 1px solid rgba(138, 43, 226, 0.3); z-index: 101; 
+            transition: right 0.5s ease;
+            display: flex; flex-direction: column; padding: 80px 30px 30px; box-sizing: border-box;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.8);
+        }
+        .side-menu.active { right: 0; }
+        .close-btn { 
+            position: absolute; top: 25px; right: 25px; font-size: 1.8rem; 
+            cursor: pointer; color: #aaa; transition: 0.3s ease; 
+        }
+        .close-btn:hover { color: #fff; transform: rotate(90deg) scale(1.1); }
+        
+        .side-menu a {
+            color: #eee; text-decoration: none; margin-bottom: 25px; font-size: 1.1rem;
+            font-weight: 600; transition: all 0.3s ease; 
+            border-bottom: 1px solid rgba(255,255,255,0.05); 
+            padding-bottom: 12px; display: flex; align-items: center; gap: 15px;
+        }
+        .side-menu a i { color: var(--accent); width: 20px; text-align: center; }
+        .side-menu a:hover { color: #fff; transform: translateX(10px); border-color: var(--accent); }
+
+        /* --- Фон --- */
+        .bg-video-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: -2; }
+        #bg-video { position: absolute; top: 50%; left: 50%; min-width: 100%; min-height: 100%; width: auto; height: auto; transform: translateX(-50%) translateY(-50%); display: block; pointer-events: none; }
+        .bg-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 10, 12, 0.85); z-index: -1; pointer-events: none; }
+
+        /* --- Контент страницы Поддержки --- */
+        @keyframes fadeInUp { 
+            from { opacity: 0; transform: translateY(30px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+
+        .support-container {
+            flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 100px 20px 40px; position: relative; z-index: 1; text-align: center;
+            animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
+        .support-container h1 {
+            font-size: 3.5rem; font-weight: 900; margin: 0 0 15px 0;
+            background: linear-gradient(90deg, #ffffff, var(--accent));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+
+        .support-container p {
+            font-size: 1.1rem; max-width: 600px; color: #d1d1d1; line-height: 1.6;
+            margin-bottom: 40px;
+        }
+
+        .support-cards {
+            display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; max-width: 900px; width: 100%;
+        }
+
+        .support-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px; padding: 30px; width: 280px;
+            transition: all 0.4s ease; text-decoration: none; color: white;
+            display: flex; flex-direction: column; align-items: center; gap: 15px;
+        }
+
+        .support-card:hover {
+            background: rgba(138, 43, 226, 0.1); border-color: var(--accent);
+            transform: translateY(-10px); box-shadow: 0 15px 30px var(--accent-glow);
+        }
+
+        .support-card i { font-size: 3rem; color: var(--accent); margin-bottom: 10px; transition: transform 0.3s; }
+        .support-card:hover i { transform: scale(1.1); }
+        .support-card h3 { margin: 0; font-size: 1.3rem; }
+        .support-card span { font-size: 0.9rem; color: var(--text-muted); text-align: center; }
+
+        .back-btn {
+            margin-top: 50px; display: inline-flex; align-items: center; gap: 10px;
+            color: white; text-decoration: none; font-weight: 600; font-size: 1.1rem;
+            border-bottom: 1px solid transparent; transition: 0.3s;
+        }
+        .back-btn:hover { color: var(--accent); border-color: var(--accent); gap: 15px; }
+
+        .footer { text-align: center; padding: 25px; color: rgba(255, 255, 255, 0.3); font-size: 0.9rem; margin-top: auto; border-top: 1px solid rgba(255, 255, 255, 0.05); background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px); }
+
+        @media (max-width: 768px) {
+            .support-container h1 { font-size: 2.5rem; }
+            .support-card { width: 100%; max-width: 350px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="menu-btn" id="menu-btn"><i class="fa-solid fa-bars"></i></div>
+
+    <div class="side-menu" id="side-menu">
+        <div class="close-btn" id="close-btn"><i class="fa-solid fa-xmark"></i></div>
+        <a href="/"><i class="fa-solid fa-house"></i> Главная</a>
+        <a href="/oferta/"><i class="fa-solid fa-file-contract"></i> Договор оферты</a>
+        <a href="/privacy/"><i class="fa-solid fa-shield-halved"></i> Конфиденциальность</a>
+    </div>
+
+    <div class="bg-video-wrapper">
+        <video autoplay loop muted playsinline id="bg-video">
+            <source src="/background.mp4" type="video/mp4">
+        </video>
+    </div>
+    <div class="bg-overlay"></div>
+
+    <main class="support-container">
+        <h1>Поддержка</h1>
+        <p>Столкнулись с проблемой при пополнении, нашли баг или есть вопросы по игре? Наша команда готова помочь вам в кратчайшие сроки.</p>
+
+        <div class="support-cards">
+            <a href="https://vk.com/revine.game" target="_blank" class="support-card">
+                <i class="fa-brands fa-vk"></i>
+                <h3>Сообщество VK</h3>
+                <span>Быстрые ответы от администрации в личных сообщениях группы</span>
+            </a>
+
+            <a href="https://discord.gg/ваш_канал" target="_blank" class="support-card">
+                <i class="fa-brands fa-discord"></i>
+                <h3>Discord Сервер</h3>
+                <span>Общение с игроками и голосовая техническая поддержка</span>
+            </a>
+
+            <a href="mailto:revinesupport@gmail.com" class="support-card">
+                <i class="fa-solid fa-envelope-open-text"></i>
+                <h3>E-mail</h3>
+                <span>Для решения сложных вопросов по донату и аккаунтам</span>
+            </a>
+        </div>
+
+        <a href="/" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Вернуться на главную</a>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 reVine entertainment. Все права защищены (наверное)</p>
+    </footer>
+
+    <script>
+        const menuBtn = document.getElementById('menu-btn');
+        const closeBtn = document.getElementById('close-btn');
+        const sideMenu = document.getElementById('side-menu');
+
+        menuBtn.addEventListener('click', () => sideMenu.classList.add('active'));
+        closeBtn.addEventListener('click', () => sideMenu.classList.remove('active'));
+        
+        document.addEventListener('click', (e) => {
+            if(!sideMenu.contains(e.target) && !menuBtn.contains(e.target) && sideMenu.classList.contains('active')) {
+                sideMenu.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
