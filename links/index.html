@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Полезные ссылки | reVine CRMP</title>
+    
+    <link rel="icon" href="/logo1.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --md-sys-color-primary: #8a2be2;
+            --md-sys-color-primary-container: rgba(138, 43, 226, 0.15);
+            --md-sys-color-surface: #0a0a0e;
+            --md-sys-color-on-surface: #ffffff;
+            --glass-bg: rgba(25, 25, 32, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+            --text-muted: #aaaaaa;
+            --accent-glow: rgba(138, 43, 226, 0.5);
+        }
+
+        * { 
+            box-sizing: border-box; 
+            margin: 0; padding: 0; 
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
+        }
+
+        body { 
+            font-family: 'Montserrat', sans-serif; 
+            background: var(--md-sys-color-surface); 
+            color: var(--md-sys-color-on-surface); 
+            min-height: 100vh; 
+            display: flex; flex-direction: column; 
+            overflow-x: hidden;
+        }
+
+        /* --- ФОН ИЗ MAIN --- */
+        .bg-video-wrapper {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            overflow: hidden; z-index: -4;
+        }
+        #bg-video {
+            position: absolute; top: 50%; left: 50%;
+            min-width: 100%; min-height: 100%; width: auto; height: auto;
+            transform: translate(-50%, -50%); pointer-events: none;
+        }
+        .bg-overlay {
+            position: fixed; inset: 0;
+            background: radial-gradient(circle at center, rgba(10,10,14,0.75) 0%, rgba(5,5,8,0.98) 100%);
+            z-index: -3;
+        }
+
+        .ambient-orb {
+            position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.4; z-index: -2;
+            animation: drift 15s infinite alternate ease-in-out; pointer-events: none;
+        }
+        .orb-1 { width: 400px; height: 400px; background: rgba(138, 43, 226, 0.35); top: -10%; left: -10%; }
+        .orb-2 { width: 300px; height: 300px; background: rgba(70, 130, 180, 0.25); bottom: 10%; right: -5%; animation-delay: -5s; }
+
+        @keyframes drift {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(40px, 40px) scale(1.15); }
+        }
+
+        /* --- ШАПКА СТРАНИЦЫ --- */
+        .page-header { text-align: center; padding: 50px 20px 20px; position: relative; z-index: 1; }
+        .page-header h1 { font-size: clamp(2rem, 5vw, 2.8rem); font-weight: 900; color: #fff; margin-bottom: 10px; letter-spacing: 1px; }
+        
+        .nav-back { 
+            display: inline-flex; align-items: center; gap: 8px; 
+            color: var(--text-muted); text-decoration: none; 
+            font-size: 1rem; font-weight: 600; transition: color 0.3s ease; 
+            margin-bottom: 20px; padding: 10px 20px;
+            background: rgba(255,255,255,0.05); border-radius: 100px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .nav-back:hover { color: #fff; background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.1); }
+
+        /* --- СЕКЦИЯ ССЫЛОК --- */
+        .links-section { padding: 20px 20px 60px; text-align: center; flex: 1; position: relative; z-index: 1; }
+        .cards-container { display: flex; justify-content: center; flex-wrap: wrap; gap: 25px; max-width: 1200px; margin: 0 auto; }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        .glass-card {
+            background: var(--glass-bg); 
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); 
+            border: 1px solid var(--glass-border);
+            border-radius: 24px; padding: 40px 25px; width: 260px; 
+            text-decoration: none; color: var(--md-sys-color-on-surface);
+            box-shadow: var(--glass-shadow);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            opacity: 0; animation: fadeInUp 0.8s ease-out forwards;
+            display: flex; flex-direction: column; align-items: center;
+            position: relative; overflow: hidden;
+        }
+        
+        .glass-card:nth-child(1) { animation-delay: 0.1s; }
+        .glass-card:nth-child(2) { animation-delay: 0.2s; }
+        .glass-card:nth-child(3) { animation-delay: 0.3s; }
+        .glass-card:nth-child(4) { animation-delay: 0.4s; }
+        
+        .glass-card i { font-size: 2.8rem; color: var(--md-sys-color-on-surface); margin-bottom: 20px; transition: all 0.3s ease; }
+        
+        .glass-card:hover { 
+            transform: translateY(-12px) scale(1.02); 
+            border-color: rgba(138, 43, 226, 0.4); 
+            background: rgba(35, 30, 45, 0.85);
+            box-shadow: 0 20px 40px rgba(138, 43, 226, 0.2); 
+        }
+        
+        .glass-card:hover i { color: var(--md-sys-color-primary); filter: drop-shadow(0 0 12px var(--accent-glow)); transform: scale(1.1); }
+        .glass-card h3 { font-size: 1.3rem; font-weight: 800; margin: 0 0 10px 0; color: var(--md-sys-color-primary); letter-spacing: 0.5px; }
+        .glass-card p { color: var(--text-muted); margin: 0; font-size: 0.95rem; line-height: 1.5; }
+
+        .footer { text-align: center; padding: 25px; color: rgba(255, 255, 255, 0.3); font-size: 0.9rem; border-top: 1px solid rgba(255, 255, 255, 0.05); background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(10px); position: relative; z-index: 1; margin-top: auto; }
+
+        @media (max-width: 768px) {
+            .glass-card { width: 100%; max-width: 320px; padding: 30px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+    <div class="bg-video-wrapper">
+        <video autoplay loop muted playsinline id="bg-video">
+            <source src="/background.mp4" type="video/mp4">
+        </video>
+    </div>
+    <div class="bg-overlay"></div>
+
+    <div class="page-header">
+        <a href="/" class="nav-back"><i class="fa-solid fa-arrow-left"></i> На главную</a>
+        <h1>Наши ресурсы</h1>
+    </div>
+
+    <section class="links-section">
+        <div class="cards-container">
+            <a href="https://revine-forum.hgweb.ru/index.php" class="glass-card" target="_blank">
+                <i class="fa-solid fa-comments"></i>
+                <h3>Форум</h3>
+                <p>Обсуждения, жалобы и правила проекта</p>
+            </a>
+            <a href="https://t.me/rev1ne" class="glass-card" target="_blank">
+                <i class="fa-brands fa-telegram"></i>
+                <h3>Telegram</h3>
+                <p>Новости спойлеры и обновления проекта</p>
+            </a>
+            <a href="https://vk.ru/revine.game" class="glass-card" target="_blank">
+                <i class="fa-brands fa-vk"></i>
+                <h3>ВКонтакте</h3>
+                <p>Официальная группа нашего сервера</p>
+            </a>
+            <a href="https://vk.me/join/a42cKJaxuShF69v84WmkGeBfzDvKYoIr2W0=" class="glass-card" target="_blank">
+                <i class="fa-solid fa-users"></i>
+                <h3>Беседа игроков</h3>
+                <p>Поиск друзей и общение</p>
+            </a>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>&copy; 2026 reVine entertainment.</p>
+    </footer>
+
+</body>
+</html>
