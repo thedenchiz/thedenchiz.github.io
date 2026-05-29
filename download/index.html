@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>reVine - download</title>
+    
+    <link rel="icon" href="/logo1.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --md-sys-color-primary: #8a2be2;
+            --md-sys-color-primary-container: rgba(138, 43, 226, 0.15);
+            --md-sys-color-surface: #0a0a0e;
+            --md-sys-color-on-surface: #ffffff;
+            --glass-bg: rgba(25, 25, 32, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+            --text-muted: #aaaaaa;
+        }
+
+        * { 
+            box-sizing: border-box; 
+            margin: 0; padding: 0; 
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
+        }
+
+        body { 
+            font-family: 'Montserrat', sans-serif; 
+            background: var(--md-sys-color-surface); 
+            color: var(--md-sys-color-on-surface); 
+            min-height: 100vh; 
+            display: flex; flex-direction: column; 
+            overflow-x: hidden;
+        }
+
+        /* --- ФОН ИЗ MAIN --- */
+        .bg-video-wrapper {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            overflow: hidden; z-index: -4;
+        }
+        #bg-video {
+            position: absolute; top: 50%; left: 50%;
+            min-width: 100%; min-height: 100%; width: auto; height: auto;
+            transform: translate(-50%, -50%); pointer-events: none;
+        }
+        .bg-overlay {
+            position: fixed; inset: 0;
+            background: radial-gradient(circle at center, rgba(10,10,14,0.75) 0%, rgba(5,5,8,0.98) 100%);
+            z-index: -3;
+        }
+
+        .ambient-orb {
+            position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.4; z-index: -2;
+            animation: drift 15s infinite alternate ease-in-out; pointer-events: none;
+        }
+        .orb-1 { width: 400px; height: 400px; background: rgba(138, 43, 226, 0.35); top: -10%; left: -10%; }
+        .orb-2 { width: 300px; height: 300px; background: rgba(70, 130, 180, 0.25); bottom: 10%; right: -5%; animation-delay: -5s; }
+
+        @keyframes drift {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(40px, 40px) scale(1.15); }
+        }
+
+        /* --- ШАПКА СТРАНИЦЫ --- */
+        .page-header { text-align: center; padding: 50px 20px 30px; position: relative; z-index: 1; }
+        .page-header h1 { font-size: clamp(2rem, 5vw, 2.8rem); font-weight: 900; color: #fff; margin-bottom: 10px; letter-spacing: 1px; }
+        
+        .nav-back { 
+            display: inline-flex; align-items: center; gap: 8px; 
+            color: var(--text-muted); text-decoration: none; 
+            font-size: 1rem; font-weight: 600; transition: color 0.3s ease; 
+            margin-bottom: 20px; padding: 10px 20px;
+            background: rgba(255,255,255,0.05); border-radius: 100px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .nav-back:hover { color: #fff; background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.1); }
+
+        /* --- КОНТЕЙНЕРЫ И ПАНЕЛИ --- */
+        .content-container { max-width: 900px; margin: 0 auto; padding: 0 20px 80px; display: flex; flex-direction: column; gap: 40px; position: relative; z-index: 1; }
+
+        .glass-panel {
+            background: var(--glass-bg); 
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); 
+            border: 1px solid var(--glass-border);
+            border-radius: 24px; padding: 40px; 
+            box-shadow: var(--glass-shadow);
+        }
+        
+        .download-panel { text-align: center; }
+        .download-panel h2, .instructions-panel h2 { color: #fff; margin-top: 0; font-weight: 800; letter-spacing: 1px; }
+        .download-panel h2 { margin-bottom: 30px; }
+        .instructions-panel h2 { text-align: center; margin-bottom: 40px; color: var(--md-sys-color-primary); text-shadow: 0 0 20px rgba(138, 43, 226, 0.3); }
+
+        /* --- ТАБЫ (BITNESS) --- */
+        .arch-tabs { 
+            display: flex; background: rgba(0, 0, 0, 0.4); 
+            border-radius: 100px; padding: 6px; margin-bottom: 20px; gap: 5px; 
+            max-width: 400px; margin-left: auto; margin-right: auto; 
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .arch-tab { 
+            flex: 1; background: transparent; border: none; color: var(--text-muted); 
+            padding: 14px 10px; border-radius: 100px; font-size: 1rem; font-weight: 700; 
+            cursor: pointer; transition: all 0.3s ease; font-family: inherit; 
+        }
+        .arch-tab.active { 
+            background: rgba(138, 43, 226, 0.85); color: #ffffff; 
+            box-shadow: 0 4px 15px rgba(138, 43, 226, 0.3); 
+        }
+        .arch-tab:hover:not(.active) { color: #ffffff; background: rgba(255, 255, 255, 0.05); }
+
+        .arch-content { display: none; flex-direction: column; gap: 15px; max-width: 400px; margin: 0 auto; }
+        .arch-content.active { display: flex; animation: fadeInUp 0.4s ease-out forwards; }
+
+        /* --- КНОПКИ (ИЗ MAIN) --- */
+        .btn-md3-glass {
+            display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+            padding: 16px 24px; border-radius: 16px;
+            background: rgba(35, 35, 45, 0.85);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #e8e8e8; font-size: 1.05rem; font-weight: 700; text-decoration: none;
+            transition: all 0.35s cubic-bezier(0.2, 0, 0, 1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.07);
+            position: relative; overflow: hidden; letter-spacing: 0.3px;
+            width: 100%; cursor: pointer; font-family: inherit;
+        }
+
+        .btn-md3-glass::after {
+            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.07), transparent);
+            transition: all 0.5s ease; transform: skewX(-20deg);
+        }
+
+        .btn-md3-glass:hover {
+            transform: translateY(-3px) scale(1.02);
+            background: rgba(50, 50, 65, 0.9);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 14px 35px rgba(0,0,0,0.5);
+            color: #fff;
+        }
+        .btn-md3-glass:hover::after { left: 150%; }
+
+        .btn-md3-glass i { font-size: 1.3rem; }
+
+        .btn-primary {
+            background: rgba(100, 30, 180, 0.75);
+            border-color: rgba(138, 43, 226, 0.5);
+            box-shadow: 0 4px 20px rgba(138,43,226,0.25), inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+        .btn-primary:hover {
+            background: rgba(120, 40, 210, 0.85);
+            box-shadow: 0 14px 40px rgba(138, 43, 226, 0.45);
+        }
+
+        .check-bit-wrapper { max-width: 400px; margin: 0 auto 30px; }
+
+        /* --- ИНСТРУКЦИИ --- */
+        .step { display: flex; flex-direction: column; gap: 15px; margin-bottom: 40px; padding-bottom: 40px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        .step:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        
+        .step-header { display: flex; align-items: center; gap: 18px; }
+        .step-number { 
+            background: rgba(138, 43, 226, 0.85); color: #fff; 
+            width: 45px; height: 45px; border-radius: 50%; 
+            display: flex; justify-content: center; align-items: center; 
+            font-weight: 900; font-size: 1.3rem; 
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.4); flex-shrink: 0; 
+        }
+        .step h3 { margin: 0; font-size: 1.4rem; color: #fff; font-weight: 700; }
+        .step p { color: var(--text-muted); line-height: 1.7; margin: 0; font-size: 1.05rem; }
+        
+        .step-img { 
+            width: 100%; max-width: 600px; border-radius: 16px; 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            margin-top: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+        }
+
+        .footer { text-align: center; padding: 25px; color: rgba(255, 255, 255, 0.3); font-size: 0.9rem; border-top: 1px solid rgba(255, 255, 255, 0.05); background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(10px); margin-top: auto; position: relative; z-index: 1; }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 768px) {
+            .glass-panel { padding: 30px 20px; border-radius: 20px; }
+            .step-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+            .btn-md3-glass { padding: 14px 20px; font-size: 0.95rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+    <div class="bg-video-wrapper">
+        <video autoplay loop muted playsinline id="bg-video">
+            <source src="/background.mp4" type="video/mp4">
+        </video>
+    </div>
+    <div class="bg-overlay"></div>
+
+    <div class="page-header">
+        <a href="/" class="nav-back"><i class="fa-solid fa-arrow-left"></i> На главную</a>
+        <h1>Установка игры</h1>
+    </div>
+
+    <div class="content-container">
+        
+        <div class="glass-panel download-panel">
+            <h2>Шаг 1. Загрузка лаунчера</h2>
+            
+            <div class="arch-tabs">
+                <button class="arch-tab active" data-target="arch-64">64-bit</button>
+                <button class="arch-tab" data-target="arch-32">32-bit</button>
+            </div>
+
+            <div class="check-bit-wrapper">
+                <button id="checkBitnessBtn" class="btn-md3-glass">
+                    <i class="fa-solid fa-microchip"></i> Проверить устройство
+                </button>
+            </div>
+
+            <div id="arch-64" class="arch-content active">
+                <a href="https://t.me/rev1ne/29" class="btn-md3-glass btn-primary" target="_blank">
+                    <i class="fa-brands fa-telegram"></i> Скачать с Telegram
+                </a>
+                <a href="#" class="btn-md3-glass" target="_blank">
+                    <i class="fa-brands fa-google-drive"></i> Google Диск
+                </a>
+                <a href="http://revinegame.ru/revine.x32-v1.5.apk" class="btn-md3-glass">
+                    <i class="fa-solid fa-server"></i> Наш хостинг
+                </a>
+            </div>
+
+            <div id="arch-32" class="arch-content">
+                <a href="https://t.me/rev1ne/29" class="btn-md3-glass btn-primary" target="_blank">
+                    <i class="fa-brands fa-telegram"></i> Скачать с Telegram
+                </a>
+                <a href="#" class="btn-md3-glass" target="_blank">
+                    <i class="fa-brands fa-google-drive"></i> Google Диск
+                </a>
+                <a href="http://revinegame.ru/revine.x32-v1.5.apk" class="btn-md3-glass">
+                    <i class="fa-solid fa-server"></i> Наш хостинг
+                </a>
+            </div>
+        </div>
+
+        <div class="glass-panel instructions-panel">
+            <h2>Как начать играть?</h2>
+            
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">2</div>
+                    <h3>Установка файла</h3>
+                </div>
+                <p>После загрузки APK файла (на предыдущем шаге), откройте его на вашем устройстве. Если телефон запросит разрешение на установку из неизвестных источников - разрешите.</p>
+                <img src="/step1.jpg" alt="Установка APK" class="step-img">
+            </div>
+
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">3</div>
+                    <h3>Ввод никнейма</h3>
+                </div>
+                <p>Откройте установленное приложение. В настройках лаунчера введите ваш игровой никнейм в формате Имя_Фамилия (например, Ivan_Ivanov).</p>
+                <img src="/step2.jpg" alt="Ввод ника" class="step-img">
+            </div>
+
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">4</div>
+                    <h3>Запуск и игра</h3>
+                </div>
+                <p>Нажмите кнопку "Играть" и дождитесь докачки кеша (если потребуется). После этого вы появитесь на сервере. Не забудьте ввести промокод <b style="color: #fff;">#revine</b> при регистрации!</p>
+                <img src="/step3.jpg" alt="Запуск игры" class="step-img">
+            </div>
+        </div>
+
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2026 reVine entertainment.</p>
+    </footer>
+
+    <script>
+        // Скрипт переключения вкладок
+        const tabs = document.querySelectorAll('.arch-tab');
+        const contents = document.querySelectorAll('.arch-content');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                contents.forEach(c => c.classList.remove('active'));
+                
+                tab.classList.add('active');
+                const targetId = tab.getAttribute('data-target');
+                document.getElementById(targetId).classList.add('active');
+            });
+        });
+
+        // Скрипт проверки битности
+        document.getElementById('checkBitnessBtn').addEventListener('click', function() {
+            const ua = navigator.userAgent.toLowerCase();
+            let is64 = false;
+
+            if (ua.includes('x86_64') || ua.includes('x86-64') || ua.includes('win64') || 
+                ua.includes('x64;') || ua.includes('amd64') || ua.includes('wow64') || 
+                ua.includes('aarch64') || ua.includes('arm64')) {
+                is64 = true;
+            }
+
+            if (ua.includes('android')) {
+                 if (ua.includes('arm64') || ua.includes('aarch64')) {
+                     is64 = true;
+                 }
+            }
+
+            if (is64) {
+                alert('Похоже, ваше устройство поддерживает 64-bit архитектуру! Вкладка переключена на 64-bit.');
+                document.querySelector('[data-target="arch-64"]').click();
+            } else {
+                alert('Скорее всего, у вас 32-bit система (или ваш браузер скрывает точные данные). Вкладка переключена на 32-bit.');
+                document.querySelector('[data-target="arch-32"]').click();
+            }
+        });
+    </script>
+
+</body>
+</html>
