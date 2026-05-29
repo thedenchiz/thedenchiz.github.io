@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <title>reVine CRMP | Договор оферты</title>
+    <meta name="description" content="Договор публичной оферты проекта reVine CRMP">
+    <link rel="icon" href="/logo1.png" type="image/png">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --accent: #8a2be2;
+            --accent-glow: rgba(138, 43, 226, 0.5);
+            --bg-dark: #0f0f13;
+            --text-main: #ffffff;
+            --text-muted: #b3b3b3;
+        }
+
+        * { -webkit-tap-highlight-color: transparent; outline: none; box-sizing: border-box; }
+        .menu-btn, .close-btn { user-select: none; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Montserrat', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-main);
+            overflow-x: hidden;
+            display: flex; flex-direction: column; min-height: 100vh;
+        }
+
+        /* --- Бургер Меню --- */
+        .menu-btn {
+            position: fixed; top: 20px; right: 20px; z-index: 100;
+            background: rgba(255,255,255,0.05); backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2); border-radius: 12px;
+            padding: 12px 16px; cursor: pointer; color: white; font-size: 1.5rem;
+            transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        .menu-btn:hover { background: var(--accent); border-color: var(--accent); transform: scale(1.05); }
+        
+        .side-menu {
+            position: fixed; top: 0; right: -320px; width: 300px; height: 100vh;
+            background: rgba(15, 15, 19, 0.98); backdrop-filter: blur(20px);
+            border-left: 1px solid rgba(138, 43, 226, 0.3); z-index: 101; 
+            transition: right 0.5s ease;
+            display: flex; flex-direction: column; padding: 80px 30px 30px;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.8);
+        }
+        .side-menu.active { right: 0; }
+        .close-btn { 
+            position: absolute; top: 25px; right: 25px; font-size: 1.8rem; 
+            cursor: pointer; color: #aaa; transition: 0.3s ease; 
+        }
+        .close-btn:hover { color: #fff; transform: rotate(90deg) scale(1.1); }
+        
+        .side-menu a {
+            color: #eee; text-decoration: none; margin-bottom: 25px; font-size: 1.1rem;
+            font-weight: 600; transition: all 0.3s ease; 
+            border-bottom: 1px solid rgba(255,255,255,0.05); 
+            padding-bottom: 12px; display: flex; align-items: center; gap: 15px;
+        }
+        .side-menu a i { color: var(--accent); width: 20px; text-align: center; }
+        .side-menu a:hover { color: #fff; transform: translateX(10px); border-color: var(--accent); }
+
+        /* --- Фон --- */
+        .bg-video-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: -2; }
+        #bg-video { position: absolute; top: 50%; left: 50%; min-width: 100%; min-height: 100%; width: auto; height: auto; transform: translateX(-50%) translateY(-50%); display: block; pointer-events: none; }
+        .bg-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 10, 12, 0.85); z-index: -1; pointer-events: none; }
+
+        /* --- Контейнер для текста --- */
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        .content-wrapper {
+            flex: 1; display: flex; flex-direction: column; align-items: center;
+            padding: 100px 20px 60px; position: relative; z-index: 1;
+            animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
+        .text-box {
+            background: rgba(15, 15, 19, 0.85);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 900px;
+            width: 100%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        }
+
+        .text-box h1 {
+            font-size: 2.5rem; font-weight: 900; margin: 0 0 30px 0; text-align: center;
+            background: linear-gradient(90deg, #ffffff, var(--accent));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .text-box h2 { font-size: 1.3rem; font-weight: 700; color: #fff; margin: 30px 0 15px 0; border-bottom: 1px solid rgba(138, 43, 226, 0.3); padding-bottom: 10px; }
+        .text-box p, .text-box li { font-size: 1rem; color: #d1d1d1; line-height: 1.7; margin-bottom: 10px; }
+        .text-box ul { padding-left: 20px; margin-bottom: 20px; }
+
+        .footer { text-align: center; padding: 25px; color: rgba(255, 255, 255, 0.3); font-size: 0.9rem; margin-top: auto; border-top: 1px solid rgba(255, 255, 255, 0.05); background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px); position: relative; z-index: 1; }
+
+        @media (max-width: 768px) {
+            .text-box { padding: 25px; }
+            .text-box h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="menu-btn" id="menu-btn"><i class="fa-solid fa-bars"></i></div>
+
+    <div class="side-menu" id="side-menu">
+        <div class="close-btn" id="close-btn"><i class="fa-solid fa-xmark"></i></div>
+        <a href="/"><i class="fa-solid fa-house"></i> Главная</a>
+        <a href="/support/"><i class="fa-solid fa-headset"></i> Тех. поддержка</a>
+        <a href="/politic/"><i class="fa-solid fa-shield-halved"></i> Конфиденциальность</a>
+    </div>
+
+    <div class="bg-video-wrapper">
+        <video autoplay loop muted playsinline id="bg-video">
+            <source src="/background.mp4" type="video/mp4">
+        </video>
+    </div>
+    <div class="bg-overlay"></div>
+
+    <main class="content-wrapper">
+        <div class="text-box">
+            <h1>Договор оферты</h1>
+            <p>Публичная оферта о предоставлении услуг проекта «reVine CRMP» (revinegame.ru).</p>
+
+            <h2>1. Общие положения</h2>
+            <p>1.1. Данный документ является официальным предложением (публичной офертой) Администрации проекта «reVine CRMP» (далее — Исполнитель) и содержит все существенные условия предоставления развлекательных услуг и продажи виртуальных ценностей любому физическому лицу (далее — Пользователь).</p>
+            <p>1.2. Осуществляя пополнение личного счета на сайте revinegame.ru, Пользователь полностью и безоговорочно принимает условия данного Договора.</p>
+
+            <h2>2. Предмет оферты</h2>
+            <p>2.1. Исполнитель предоставляет Пользователю возможность получения дополнительных внутриигровых преимуществ (виртуальной валюты, предметов, статусов) на серверах проекта за добровольное вознаграждение.</p>
+            <p>2.2. Все виртуальные ценности не имеют реальной стоимости, не подлежат обмену на реальные деньги и используются исключительно в рамках игрового процесса.</p>
+
+            <h2>3. Порядок оплаты и зачисления</h2>
+            <p>3.1. Оплата вознаграждения осуществляется Пользователем через интегрированную платежную систему AnyPay.</p>
+            <p>3.2. Пользователь обязан корректно указать свой игровой никнейм и сервер при совершении платежа. Исполнитель не несет ответственности за неверно введенные данные.</p>
+            <p>3.3. Услуги считаются оказанными в полном объеме с момента автоматического зачисления донат-очков на внутриигровой счет аккаунта Пользователя сервером.</p>
+
+            <h2>4. Политика возврата средств</h2>
+            <p>4.1. Учитывая, что Исполнитель предоставляет доступ к цифровому контенту, возврат переведенных денежных средств не осуществляется ни при каких обстоятельствах, включая блокировку аккаунта Пользователя за нарушение правил сервера.</p>
+            <p>4.2. Платеж расценивается как добровольное пожертвование на техническую поддержку и развитие проекта.</p>
+
+            <h2>5. Ответственность сторон</h2>
+            <p>5.1. Администрация не несет ответственности за технические сбои на стороне платежного агрегатора.</p>
+            <p>5.2. В случае спорных ситуаций (например, донат не пришел на аккаунт) Пользователь обязуется обратиться в Службу поддержки проекта для ручного решения вопроса.</p>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 reVine entertainment. Все права защищены (наверное)</p>
+    </footer>
+
+    <script>
+        const menuBtn = document.getElementById('menu-btn');
+        const closeBtn = document.getElementById('close-btn');
+        const sideMenu = document.getElementById('side-menu');
+
+        menuBtn.addEventListener('click', () => sideMenu.classList.add('active'));
+        closeBtn.addEventListener('click', () => sideMenu.classList.remove('active'));
+        
+        document.addEventListener('click', (e) => {
+            if(!sideMenu.contains(e.target) && !menuBtn.contains(e.target) && sideMenu.classList.contains('active')) {
+                sideMenu.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
