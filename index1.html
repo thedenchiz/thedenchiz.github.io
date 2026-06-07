@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <title>reVine CRMP | Официальный сайт</title>
+    <meta name="description" content="Начни играть прямо сейчас!">
+    <link rel="icon" href="/logo.png" type="image/png">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --md-sys-color-primary: #8a2be2;
+            --md-sys-color-primary-container: rgba(138, 43, 226, 0.15);
+            --md-sys-color-surface: #0a0a0e;
+            --md-sys-color-on-surface: #ffffff;
+            --glass-bg: rgba(20, 20, 25, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        * { 
+            box-sizing: border-box; 
+            margin: 0; padding: 0; 
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--md-sys-color-surface);
+            color: var(--md-sys-color-on-surface);
+            overflow-x: hidden;
+            display: flex; flex-direction: column; min-height: 100vh;
+        }
+
+        /* --- ФОН --- */
+        .bg-video-wrapper {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            overflow: hidden; z-index: -4;
+        }
+        #bg-video {
+            position: absolute; top: 50%; left: 50%;
+            min-width: 100%; min-height: 100%; width: auto; height: auto;
+            transform: translate(-50%, -50%); pointer-events: none;
+        }
+        .bg-overlay {
+            position: fixed; inset: 0;
+            background: radial-gradient(circle at center, rgba(10,10,14,0.65) 0%, rgba(5,5,8,0.97) 100%);
+            z-index: -3;
+        }
+
+        .ambient-orb {
+            position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.4; z-index: -2;
+            animation: drift 15s infinite alternate ease-in-out; pointer-events: none;
+        }
+        .orb-1 { width: 400px; height: 400px; background: rgba(138, 43, 226, 0.35); top: -10%; left: -10%; }
+        .orb-2 { width: 300px; height: 300px; background: rgba(70, 130, 180, 0.25); bottom: 10%; right: -5%; animation-delay: -5s; }
+
+        @keyframes drift {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(40px, 40px) scale(1.15); }
+        }
+
+        /* --- ВИДЖЕТ СТАТУСА СЕРВЕРА --- */
+        .server-status-widget {
+            position: absolute; top: 30px; left: 30px;
+            background: rgba(35, 35, 45, 0.6);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px; padding: 12px 24px;
+            display: flex; align-items: center; gap: 15px;
+            z-index: 100; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease;
+        }
+        .server-status-widget:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.15); }
+        
+        .status-indicator { position: relative; display: flex; align-items: center; justify-content: center; width: 14px; height: 14px; }
+        .status-dot { width: 100%; height: 100%; border-radius: 50%; transition: all 0.3s ease; }
+        
+        .status-dot.loading { background: #eab308; animation: pulse-opacity 1.5s infinite; }
+        .status-dot.online { background: #22c55e; box-shadow: 0 0 12px #22c55e; animation: pulse-shadow 2s infinite; }
+        .status-dot.offline { background: #ef4444; box-shadow: 0 0 12px #ef4444; }
+
+        .status-info { display: flex; flex-direction: column; }
+        .status-label { font-size: 0.7rem; color: #aaa; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; line-height: 1; margin-bottom: 3px; }
+        .status-count { font-size: 1rem; font-weight: 900; line-height: 1; }
+
+        @keyframes pulse-shadow { 0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); } 70% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); } 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); } }
+        @keyframes pulse-opacity { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+        /* --- НАВБАР --- */
+        .floating-nav {
+            position: fixed; z-index: 100;
+            background: rgba(12, 12, 18, 0.75);
+            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+            display: flex; align-items: center; justify-content: space-evenly;
+            opacity: 0; animation: slideInNav 0.8s cubic-bezier(0.2, 0, 0, 1) 0.5s forwards;
+        }
+
+        @keyframes slideInNav {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .nav-item {
+            position: relative; color: #777; text-decoration: none;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: all 0.3s ease; padding: 10px; border-radius: 16px;
+        }
+        .nav-item i { font-size: 1.3rem; z-index: 2; transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1); }
+        .nav-item span { font-size: 0.6rem; font-weight: 700; margin-top: 5px; text-transform: uppercase; letter-spacing: 0.5px; z-index: 2; }
+        .nav-item::before {
+            content: ''; position: absolute; inset: 0; background: rgba(255,255,255,0.08);
+            border-radius: 16px; transform: scale(0.5); opacity: 0;
+            transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+        }
+        .nav-item:hover { color: #fff; }
+        .nav-item:hover i { transform: translateY(-3px); color: var(--md-sys-color-primary); }
+        .nav-item:hover::before { transform: scale(1); opacity: 1; }
+
+        /* --- ГЕРОЙ --- */
+        .hero {
+            position: relative; min-height: 100vh; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; overflow: hidden; z-index: 1;
+        }
+
+        /* Огромный фоновый текст REVINE — как в референсе */
+        .hero-bg-text {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(8rem, 28vw, 30rem);
+            font-weight: 900;
+            white-space: nowrap;
+            user-select: none; pointer-events: none;
+            letter-spacing: -0.04em;
+            z-index: 0;
+            /* Эффект outline/stroke как в референсе */
+            color: transparent;
+            -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.10);
+            background: linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(138,43,226,0.06) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: pulseText 8s infinite alternate ease-in-out;
+            /* Размытие снизу для глубины */
+            mask-image: linear-gradient(180deg, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%);
+            -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%);
+        }
+
+        @keyframes pulseText {
+            0% { transform: translate(-50%, -50%) scale(1); -webkit-text-stroke-color: rgba(255,255,255,0.08); }
+            100% { transform: translate(-50%, -50%) scale(1.04); -webkit-text-stroke-color: rgba(138,43,226,0.18); }
+        }
+
+        /* Горизонтальные линии под логотипом как в референсе */
+        .hero-lines {
+            position: absolute; bottom: 0; left: 0; right: 0; height: 40%;
+            z-index: 0; pointer-events: none; overflow: hidden;
+        }
+        .hero-lines::before {
+            content: '';
+            position: absolute; bottom: 0; left: -10%; right: -10%; height: 100%;
+            background: repeating-linear-gradient(
+                to top,
+                rgba(138, 43, 226, 0.04) 0px,
+                rgba(138, 43, 226, 0.04) 1px,
+                transparent 1px,
+                transparent 24px
+            );
+            mask-image: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
+        }
+
+        .hero-center-content {
+            position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center;
+            animation: floatLogo 6s ease-in-out infinite;
+        }
+
+        .logo { 
+            width: clamp(180px, 28vw, 320px);
+            filter: drop-shadow(0 0 60px rgba(138, 43, 226, 0.5)) drop-shadow(0 20px 40px rgba(0,0,0,0.8));
+        }
+
+        @keyframes floatLogo {
+            0%, 100% { transform: translateY(0); filter: drop-shadow(0 0 60px rgba(138,43,226,0.5)) drop-shadow(0 20px 40px rgba(0,0,0,0.8)); }
+            50% { transform: translateY(-18px); filter: drop-shadow(0 0 80px rgba(138,43,226,0.75)) drop-shadow(0 30px 60px rgba(0,0,0,0.8)); }
+        }
+
+        .hero-subtitle {
+            font-size: 1rem; color: #aaa; max-width: 460px; text-align: center;
+            margin-top: 24px; line-height: 1.6; font-weight: 500;
+            opacity: 0; animation: fadeInUp 1s forwards 0.3s;
+        }
+        .hero-subtitle strong { color: #fff; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- КНОПКИ --- */
+        .action-buttons {
+            display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;
+            margin-top: 36px; z-index: 3; position: relative;
+            opacity: 0; animation: fadeInUp 1s forwards 0.6s;
+        }
+
+        .btn-md3-glass {
+            display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+            padding: 18px 42px; border-radius: 100px;
+            /* Матовый стиль — плотный фон, меньше прозрачности */
+            background: rgba(35, 35, 45, 0.85);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #e8e8e8; font-size: 1.1rem; font-weight: 700; text-decoration: none;
+            transition: all 0.35s cubic-bezier(0.2, 0, 0, 1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.07);
+            position: relative; overflow: hidden; letter-spacing: 0.3px;
+        }
+
+        .btn-md3-glass::after {
+            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.07), transparent);
+            transition: all 0.5s ease; transform: skewX(-20deg);
+        }
+
+        .btn-md3-glass:hover {
+            transform: translateY(-3px) scale(1.03);
+            background: rgba(50, 50, 65, 0.9);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 14px 35px rgba(0,0,0,0.5);
+            color: #fff;
+        }
+        .btn-md3-glass:hover::after { left: 150%; }
+
+        .btn-primary {
+            background: rgba(100, 30, 180, 0.75);
+            border-color: rgba(138, 43, 226, 0.5);
+            box-shadow: 0 4px 20px rgba(138,43,226,0.25), inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+        .btn-primary:hover {
+            background: rgba(120, 40, 210, 0.85);
+            box-shadow: 0 14px 40px rgba(138, 43, 226, 0.45);
+        }
+
+        .btn-donate {
+            background: rgba(40, 35, 10, 0.85);
+            border-color: rgba(255, 215, 0, 0.25);
+        }
+        .btn-donate i { color: #ffd700; }
+        .btn-donate:hover {
+            background: rgba(60, 50, 10, 0.9);
+            box-shadow: 0 14px 35px rgba(255, 215, 0, 0.2);
+        }
+
+        /* --- СЕКЦИЯ АТМОСФЕРЫ --- */
+        .screenshots-section {
+            padding: 0 0 80px 0;
+            text-align: center; position: relative; z-index: 2;
+        }
+
+        .screenshots-section h2 {
+            font-size: clamp(1.6rem, 4vw, 2.5rem);
+            margin-bottom: 40px; font-weight: 900;
+            letter-spacing: 4px; color: rgba(255,255,255,0.85);
+        }
+
+        /* Горизонтальный скролл */
+        .gallery-scroll-container {
+            overflow-x: auto; overflow-y: visible;
+            padding: 20px 40px 30px 40px;
+            cursor: grab;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none;
+        }
+        .gallery-scroll-container::-webkit-scrollbar { display: none; }
+        .gallery-scroll-container.grabbing { cursor: grabbing; }
+
+        .gallery {
+            display: flex; gap: 24px;
+            width: max-content;
+            perspective: 1200px;
+        }
+
+        .card-3d {
+            width: 280px; height: 370px; border-radius: 24px;
+            position: relative; cursor: pointer; flex-shrink: 0;
+            transform-style: preserve-3d;
+            background: rgba(20, 20, 28, 0.7); backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.07);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+            overflow: hidden;
+            transition: box-shadow 0.4s ease;
+        }
+
+        .card-3d img, .card-3d video {
+            width: 100%; height: 100%; object-fit: cover; opacity: 0.65;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+        .card-3d:hover img, .card-3d:hover video { opacity: 1; transform: scale(1.05); }
+        .card-3d:hover { box-shadow: 0 25px 60px rgba(138,43,226,0.2); }
+
+        .card-title {
+            position: absolute; bottom: 20px; left: 20px; z-index: 2;
+            font-size: 1.3rem; font-weight: 800;
+            text-shadow: 0 4px 15px rgba(0,0,0,0.9);
+        }
+
+        /* Scroll hint gradient */
+        .gallery-wrapper {
+            position: relative;
+        }
+        .gallery-wrapper::after {
+            content: '';
+            position: absolute; top: 0; right: 0; width: 80px; height: 100%;
+            background: linear-gradient(to right, transparent, var(--md-sys-color-surface));
+            pointer-events: none; z-index: 3;
+        }
+        .gallery-wrapper::before {
+            content: '';
+            position: absolute; top: 0; left: 0; width: 80px; height: 100%;
+            background: linear-gradient(to left, transparent, var(--md-sys-color-surface));
+            pointer-events: none; z-index: 3;
+        }
+
+        /* --- АДАПТИВНОСТЬ --- */
+        @media (min-width: 769px) {
+            .floating-nav {
+                top: 50%; right: 30px; transform: translateY(-50%);
+                flex-direction: column; padding: 20px 10px;
+                border-radius: 30px; gap: 18px;
+            }
+            .nav-item { width: 72px; height: 72px; }
+            .nav-item span { display: none; }
+        }
+
+        @media (max-width: 768px) {
+            .server-status-widget {
+                top: 20px; left: 50%; transform: translateX(-50%);
+                width: 90%; max-width: 350px; justify-content: center;
+            }
+            .server-status-widget:hover { transform: translateX(-50%) translateY(-2px); }
+            /* Чтобы на мобилке виджет не закрывал логотип: */
+            .logo { margin-top: 50px; } 
+
+            .floating-nav {
+                bottom: 20px; left: 50%; transform: translateX(-50%);
+                width: 92%; max-width: 420px; border-radius: 100px;
+                padding: 10px 12px;
+            }
+            .nav-item { flex: 1; height: 58px; gap: 2px; }
+            .nav-item span { display: block; font-size: 0.55rem; }
+            .nav-item i { font-size: 1.15rem; }
+            .hero-bg-text { font-size: 28vw; }
+            .card-3d { width: 240px; height: 320px; }
+            .btn-md3-glass { padding: 16px 28px; font-size: 0.95rem; }
+            .gallery-scroll-container { padding: 20px 20px 30px 20px; }
+            body { padding-bottom: 100px; }
+
+            @keyframes slideInNav {
+                from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+                to { opacity: 1; transform: translateX(-50%) translateY(0); }
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+    
+    <div class="bg-video-wrapper">
+        <video autoplay loop muted playsinline id="bg-video">
+            <source src="/background.mp4" type="video/mp4">
+        </video>
+    </div>
+    <div class="bg-overlay"></div>
+
+    <div class="server-status-widget">
+        <div class="status-indicator">
+            <div class="status-dot loading" id="status-dot"></div>
+        </div>
+        <div class="status-info">
+            <span class="status-label">Сервер #1</span>
+            <span class="status-count" id="online-count" aria-live="polite">Подключение...</span>
+        </div>
+    </div>
+
+    <nav class="floating-nav">
+        <a href="/support/" class="nav-item">
+            <i class="fa-solid fa-headset"></i><span>Саппорт</span>
+        </a>
+        <a href="/archive/" class="nav-item">
+            <i class="fa-solid fa-box-archive"></i><span>Архив</span>
+        </a>
+        <a href="/oferta/" class="nav-item">
+            <i class="fa-solid fa-file-contract"></i><span>Оферта</span>
+        </a>
+        <a href="/politic/" class="nav-item">
+            <i class="fa-solid fa-shield-halved"></i><span>Политика</span>
+        </a>
+    </nav>
+
+    <main class="hero">
+        <div class="hero-lines"></div>
+        <div class="hero-bg-text">REVINE</div>
+        
+        <div class="hero-center-content">
+            <img src="/logo.png" alt="reVine Game Logo" class="logo">
+        </div>
+
+        <div class="hero-subtitle">
+            Дарю тебе промокод <strong>#revine</strong> для быстрого старта на проекте! Заходи прямо сейчас.
+        </div>
+       
+        <div class="action-buttons">
+            <a href="/download/" class="btn-md3-glass btn-primary" id="download-btn">
+                <i class="fa-solid fa-download"></i> Начать играть
+            </a>
+            <a href="/links/" class="btn-md3-glass">
+                <i class="fa-solid fa-link"></i> Ссылки
+            </a>
+            <a href="/donate/" class="btn-md3-glass btn-donate">
+                <i class="fa-solid fa-gem"></i> Донат
+            </a>
+        </div>
+    </main>
+
+    <section class="screenshots-section">
+        <h2>АТМОСФЕРА СЕРВЕРА</h2>
+        <div class="gallery-wrapper">
+            <div class="gallery-scroll-container" id="galleryScroll">
+                <div class="gallery">
+                    <div class="card-3d" data-tilt>
+                        <video autoplay loop muted playsinline>
+                            <source src="/promo.mp4" type="video/mp4">
+                        </video>
+                        <div class="card-title">Промо</div>
+                    </div>
+                    <div class="card-3d" data-tilt>
+                        <img src="/vibe1.jpg" alt="Vibe 1">
+                        <div class="card-title">Локации</div>
+                    </div>
+                    <div class="card-3d" data-tilt>
+                        <img src="/vibe2.jpg" alt="Vibe 2">
+                        <div class="card-title">Тачки</div>
+                    </div>
+                    <div class="card-3d" data-tilt>
+                        <img src="/vibe3.jpg" alt="Vibe 3">
+                        <div class="card-title">Тачки</div>
+                    </div>
+                    <div class="card-3d" data-tilt>
+                        <img src="/vibe4.jpg" alt="Vibe 4">
+                        <div class="card-title">Локации</div>
+                    </div>
+                    <div class="card-3d" data-tilt>
+                        <img src="/vibe5.jpg" alt="Vibe 5">
+                        <div class="card-title">Делай что хочешь</div>
+                    </div>
+                    <div class="card-3d" data-tilt>
+                        <img src="/vibe6.jpg" alt="Vibe 6">
+                        <div class="card-title">Pasha_Extazy</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // --- 1. ОНЛАЙН СЕРВЕРА ---
+        async function loadServerStatus() {
+            const onlineCountEl = document.getElementById('online-count');
+            const statusDot = document.getElementById('status-dot');
+            if (!onlineCountEl || !statusDot) return;
+
+            try {
+                const res = await fetch('/server_config.json', { cache: 'no-store' });
+                if (!res.ok) throw new Error('Network error');
+                const data = await res.json();
+
+                if (data.status === 'online') {
+                    statusDot.className = 'status-dot online';
+                    onlineCountEl.textContent = `${data.online.toLocaleString('ru-RU')} игроков`;
+                } else {
+                    statusDot.className = 'status-dot offline';
+                    onlineCountEl.textContent = 'Сервер недоступен';
+                }
+            } catch (error) {
+                statusDot.className = 'status-dot offline';
+                onlineCountEl.textContent = 'Ошибка сети';
+            }
+        }
+        
+        loadServerStatus();
+        setInterval(loadServerStatus, 60000); // Обновлять раз в минуту
+
+
+        // --- 2. 3D наклон карточек (только десктоп) ---
+        const cards = document.querySelectorAll('[data-tilt]');
+        const isMobile = window.matchMedia('(max-width: 768px)').matches;
+
+        if (!isMobile) {
+            cards.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    const rotateX = ((y - centerY) / centerY) * -10;
+                    const rotateY = ((x - centerX) / centerX) * 10;
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+                    card.style.transition = 'transform 0.5s ease';
+                });
+                card.addEventListener('mouseenter', () => {
+                    card.style.transition = 'none';
+                });
+            });
+        }
+
+        // --- 3. Горизонтальный drag-скролл ---
+        const scrollContainer = document.getElementById('galleryScroll');
+        let isDown = false, startX, scrollLeft;
+
+        scrollContainer.addEventListener('mousedown', (e) => {
+            isDown = true;
+            scrollContainer.classList.add('grabbing');
+            startX = e.pageX - scrollContainer.offsetLeft;
+            scrollLeft = scrollContainer.scrollLeft;
+        });
+        scrollContainer.addEventListener('mouseleave', () => {
+            isDown = false;
+            scrollContainer.classList.remove('grabbing');
+        });
+        scrollContainer.addEventListener('mouseup', () => {
+            isDown = false;
+            scrollContainer.classList.remove('grabbing');
+        });
+        scrollContainer.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - scrollContainer.offsetLeft;
+            const walk = (x - startX) * 1.5;
+            scrollContainer.scrollLeft = scrollLeft - walk;
+        });
+
+        // --- 4. Счётчик скачиваний ---
+        const dlBtn = document.getElementById('download-btn');
+        dlBtn.addEventListener('click', async () => {
+            try { await fetch('/counter.php?action=hit', { signal: AbortSignal.timeout(4000) }); } catch {}
+        });
+    </script>
+</body>
+</html>
+
